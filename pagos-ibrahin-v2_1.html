@@ -1,0 +1,1185 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Pagos">
+<title>Pagos · Ibrahin</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Mono:wght@400;500&family=Outfit:wght@300;400;600;700;800&display=swap');
+
+:root {
+  --bg: #080b0f;
+  --s1: #0d1117;
+  --s2: #131920;
+  --border: #1c2530;
+  --accent: #00e5ff;
+  --green: #00ff88;
+  --yellow: #ffd600;
+  --red: #ff4560;
+  --text: #e8edf2;
+  --muted: #4a5568;
+  --muted2: #2d3748;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: 'Outfit', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  padding-bottom: 70px;
+  overflow-x: hidden;
+}
+
+/* NAV TABS */
+.nav-tabs {
+  display: flex;
+  background: var(--s1);
+  border-bottom: 1px solid var(--border);
+  position: sticky;
+  top: 0;
+  z-index: 50;
+}
+.nav-tab {
+  flex: 1;
+  padding: 14px 6px;
+  text-align: center;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  color: var(--muted);
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  transition: all 0.2s;
+}
+.nav-tab.active { color: var(--accent); border-bottom-color: var(--accent); }
+
+/* PAGES */
+.page { display: none; }
+.page.active { display: block; }
+
+/* ── PAGE: REGISTRAR ── */
+.header-bar {
+  padding: 16px 18px 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.logo {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 26px;
+  letter-spacing: 2px;
+  color: var(--accent);
+  line-height: 1;
+}
+.logo span { color: var(--text); }
+.date-pill {
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  color: var(--muted);
+  background: var(--s2);
+  padding: 5px 12px;
+  border-radius: 20px;
+  border: 1px solid var(--border);
+}
+
+/* TOTALS STRIP */
+.totals-strip {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 1px;
+  background: var(--border);
+  margin-bottom: 1px;
+}
+.total-cell {
+  background: var(--s1);
+  padding: 12px 10px;
+  text-align: center;
+}
+.total-cell .tc-label {
+  font-size: 8px;
+  font-family: 'DM Mono', monospace;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  margin-bottom: 3px;
+}
+.total-cell .tc-val {
+  font-family: 'DM Mono', monospace;
+  font-size: 17px;
+  font-weight: 500;
+  color: var(--accent);
+}
+.total-cell .tc-val.g { color: var(--green); }
+.total-cell .tc-val.y { color: var(--yellow); }
+
+/* INPUT CARD */
+.input-card {
+  margin: 12px 14px;
+  background: var(--s1);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 16px;
+}
+
+.client-row {
+  display: flex;
+  gap: 7px;
+  flex-wrap: wrap;
+  margin-bottom: 14px;
+}
+.client-btn {
+  padding: 8px 14px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: var(--s2);
+  color: var(--muted);
+  font-family: 'Outfit', sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.client-btn.sel {
+  background: var(--accent);
+  color: #000;
+  border-color: var(--accent);
+}
+
+.input-row {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+.amt-input {
+  flex: 1;
+  background: var(--s2);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 13px 14px;
+  color: var(--text);
+  font-family: 'DM Mono', monospace;
+  font-size: 15px;
+  outline: none;
+  transition: border-color 0.2s;
+  -webkit-appearance: none;
+}
+.amt-input:focus { border-color: var(--accent); }
+.amt-input::placeholder { color: var(--muted); font-size: 12px; }
+
+.btn-go {
+  width: 48px;
+  background: var(--accent);
+  color: #000;
+  border: none;
+  border-radius: 10px;
+  font-size: 20px;
+  font-weight: 900;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.1s;
+  flex-shrink: 0;
+}
+.btn-go:active { transform: scale(0.9); }
+
+/* IMAGE UPLOAD */
+.img-zone {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+.img-upload-btn {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--s2);
+  border: 1px dashed var(--border);
+  border-radius: 10px;
+  padding: 10px 14px;
+  cursor: pointer;
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 600;
+  transition: border-color 0.2s;
+}
+.img-upload-btn:hover { border-color: var(--green); color: var(--text); }
+.img-upload-btn input { display: none; }
+.img-thumb { width: 38px; height: 38px; border-radius: 7px; object-fit: cover; border: 1px solid var(--green); display: none; }
+.btn-scan {
+  background: var(--green);
+  color: #000;
+  border: none;
+  border-radius: 10px;
+  padding: 10px 14px;
+  font-family: 'Outfit', sans-serif;
+  font-size: 12px;
+  font-weight: 800;
+  cursor: pointer;
+  display: none;
+  transition: transform 0.1s;
+}
+.btn-scan:active { transform: scale(0.9); }
+
+/* PROCESSING */
+.proc-bar {
+  display: none;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 14px;
+  background: rgba(0,229,255,0.06);
+  border: 1px solid rgba(0,229,255,0.2);
+  border-radius: 10px;
+  margin-top: 10px;
+  font-size: 12px;
+  color: var(--accent);
+  font-family: 'DM Mono', monospace;
+}
+.proc-bar.show { display: flex; }
+.spin { width: 14px; height: 14px; border: 2px solid var(--border); border-top-color: var(--accent); border-radius: 50%; animation: spin 0.7s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* SECTION LABEL */
+.sec-label {
+  padding: 14px 18px 6px;
+  font-size: 9px;
+  font-family: 'DM Mono', monospace;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 2px;
+}
+
+/* TX ITEMS */
+.tx-list { padding: 0 14px; }
+.tx-card {
+  background: var(--s1);
+  border: 1px solid var(--border);
+  border-radius: 13px;
+  margin-bottom: 8px;
+  overflow: hidden;
+  animation: slideIn 0.25s ease;
+  position: relative;
+}
+.tx-card::after {
+  content: '';
+  position: absolute;
+  left: 0; top: 0; bottom: 0;
+  width: 3px;
+  background: var(--accent);
+}
+.tx-card.img-tx::after { background: var(--green); }
+
+@keyframes slideIn {
+  from { opacity: 0; transform: translateY(-6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.tx-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 14px 8px 18px;
+}
+.tx-client-name { font-weight: 800; font-size: 14px; text-transform: uppercase; letter-spacing: 0.3px; }
+.tx-meta { display: flex; align-items: center; gap: 8px; }
+.tx-time { font-family: 'DM Mono', monospace; font-size: 10px; color: var(--muted); }
+.tx-del { background: none; border: none; color: var(--muted); font-size: 17px; cursor: pointer; padding: 2px 4px; line-height: 1; }
+.tx-del:hover { color: var(--red); }
+
+.tx-chips { display: flex; flex-wrap: wrap; gap: 5px; padding: 0 18px 10px; }
+.tx-chip {
+  font-family: 'DM Mono', monospace;
+  font-size: 11px;
+  color: var(--accent);
+  background: rgba(0,229,255,0.08);
+  border: 1px solid rgba(0,229,255,0.15);
+  padding: 3px 9px;
+  border-radius: 5px;
+}
+.tx-chip.green { color: var(--green); background: rgba(0,255,136,0.08); border-color: rgba(0,255,136,0.15); }
+
+.tx-nums {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  border-top: 1px solid var(--border);
+}
+.tx-num { text-align: center; padding: 8px 4px; }
+.tx-num .tn-l { font-size: 8px; font-family: 'DM Mono', monospace; color: var(--muted); text-transform: uppercase; display: block; margin-bottom: 2px; }
+.tx-num .tn-v { font-family: 'DM Mono', monospace; font-size: 13px; }
+.tn-v.g { color: var(--green); }
+
+.tx-note { padding: 6px 18px 10px; font-size: 11px; color: var(--muted); font-style: italic; border-top: 1px solid var(--border); }
+
+/* EMPTY */
+.empty-state { text-align: center; padding: 50px 20px; color: var(--muted); }
+.empty-state .ei { font-size: 44px; margin-bottom: 14px; }
+.empty-state p { font-size: 13px; line-height: 1.7; }
+
+/* ── PAGE: REPORTES ── */
+.report-page { padding: 16px 14px; }
+.report-tabs { display: flex; gap: 8px; margin-bottom: 18px; }
+.rtab {
+  flex: 1;
+  padding: 10px;
+  text-align: center;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: var(--s1);
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--muted);
+  cursor: pointer;
+}
+.rtab.active { background: var(--accent); color: #000; border-color: var(--accent); }
+
+.report-content { }
+
+/* Client report card */
+.rep-client-card {
+  background: var(--s1);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  margin-bottom: 10px;
+  overflow: hidden;
+}
+.rep-client-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 14px 16px;
+  cursor: pointer;
+  border-bottom: 1px solid var(--border);
+}
+.rep-client-name { font-weight: 800; font-size: 14px; text-transform: uppercase; }
+.rep-client-pct { font-family: 'DM Mono', monospace; font-size: 11px; color: var(--muted); }
+.rep-client-arrow { color: var(--muted); transition: transform 0.2s; }
+.rep-client-arrow.open { transform: rotate(180deg); }
+
+.rep-client-body { display: none; padding: 12px 16px; }
+.rep-client-body.show { display: block; }
+
+.rep-stats {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+.rep-stat { text-align: center; background: var(--s2); border-radius: 9px; padding: 10px 6px; }
+.rep-stat .rs-l { font-size: 8px; font-family: 'DM Mono', monospace; color: var(--muted); text-transform: uppercase; display: block; margin-bottom: 4px; }
+.rep-stat .rs-v { font-family: 'DM Mono', monospace; font-size: 15px; font-weight: 500; }
+.rs-v.g { color: var(--green); }
+.rs-v.y { color: var(--yellow); }
+
+.rep-tx-list { }
+.rep-tx-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--border);
+  font-size: 12px;
+}
+.rep-tx-row:last-child { border-bottom: none; }
+.rep-tx-date { font-family: 'DM Mono', monospace; color: var(--muted); font-size: 10px; }
+.rep-tx-amt { font-family: 'DM Mono', monospace; }
+.rep-tx-com { font-family: 'DM Mono', monospace; color: var(--green); }
+
+/* Summary totals box */
+.summary-box {
+  background: linear-gradient(135deg, rgba(0,229,255,0.1), rgba(0,255,136,0.05));
+  border: 1px solid rgba(0,229,255,0.2);
+  border-radius: 14px;
+  padding: 18px 16px;
+  margin-bottom: 14px;
+}
+.summary-box .sb-title {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 20px;
+  letter-spacing: 2px;
+  color: var(--accent);
+  margin-bottom: 14px;
+}
+.sb-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.sb-item .sbi-l { font-size: 9px; font-family: 'DM Mono', monospace; color: var(--muted); text-transform: uppercase; letter-spacing: 1px; display: block; margin-bottom: 3px; }
+.sb-item .sbi-v { font-family: 'DM Mono', monospace; font-size: 20px; font-weight: 500; }
+.sbi-v.g { color: var(--green); }
+.sbi-v.y { color: var(--yellow); }
+
+/* Export buttons */
+.export-row { display: flex; gap: 8px; margin-top: 16px; }
+.btn-export {
+  flex: 1;
+  padding: 13px;
+  border-radius: 11px;
+  border: none;
+  font-family: 'Outfit', sans-serif;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform 0.1s, opacity 0.2s;
+}
+.btn-export:active { transform: scale(0.96); }
+.btn-csv { background: var(--green); color: #000; }
+.btn-sheets { background: #0f9d58; color: #fff; }
+
+/* ── PAGE: CLIENTES ── */
+.clients-page { padding: 14px; }
+.client-manage-card {
+  background: var(--s1);
+  border: 1px solid var(--border);
+  border-radius: 13px;
+  padding: 14px;
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.cm-color {
+  width: 10px; height: 10px;
+  border-radius: 50%;
+  background: var(--accent);
+  flex-shrink: 0;
+}
+.cm-name {
+  flex: 2;
+  background: var(--s2);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 9px 12px;
+  color: var(--text);
+  font-family: 'Outfit', sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  outline: none;
+}
+.cm-pct {
+  flex: 1;
+  background: var(--s2);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 9px 10px;
+  color: var(--accent);
+  font-family: 'DM Mono', monospace;
+  font-size: 14px;
+  outline: none;
+  text-align: center;
+}
+.cm-pct-sym { font-size: 12px; color: var(--muted); flex-shrink: 0; }
+.cm-del { background: none; border: none; color: var(--muted); font-size: 18px; cursor: pointer; }
+.cm-del:hover { color: var(--red); }
+
+.btn-add-client {
+  width: 100%;
+  padding: 13px;
+  border: 1px dashed var(--border);
+  background: transparent;
+  border-radius: 11px;
+  color: var(--muted);
+  font-family: 'Outfit', sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  margin-bottom: 10px;
+}
+.btn-save-clients {
+  width: 100%;
+  padding: 14px;
+  background: var(--accent);
+  border: none;
+  border-radius: 11px;
+  color: #000;
+  font-family: 'Outfit', sans-serif;
+  font-size: 14px;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+/* BOTTOM NAV */
+.bottom-nav {
+  position: fixed;
+  bottom: 0; left: 0; right: 0;
+  background: var(--s1);
+  border-top: 1px solid var(--border);
+  display: flex;
+  z-index: 50;
+}
+.bnav-btn {
+  flex: 1;
+  padding: 12px 6px;
+  text-align: center;
+  cursor: pointer;
+  border: none;
+  background: transparent;
+  color: var(--muted);
+  font-size: 9px;
+  font-family: 'Outfit', sans-serif;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  transition: color 0.2s;
+}
+.bnav-btn .icon { font-size: 20px; display: block; margin-bottom: 2px; }
+.bnav-btn.active { color: var(--accent); }
+
+/* WEEK CALENDAR STRIP */
+.week-strip {
+  display: flex;
+  gap: 4px;
+  margin-bottom: 16px;
+  overflow-x: auto;
+  padding-bottom: 2px;
+}
+.week-day {
+  flex-shrink: 0;
+  width: 44px;
+  background: var(--s2);
+  border: 1px solid var(--border);
+  border-radius: 9px;
+  padding: 8px 4px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.week-day.active { background: var(--accent); border-color: var(--accent); }
+.week-day .wd-name { font-size: 9px; color: var(--muted); text-transform: uppercase; font-family: 'DM Mono', monospace; display: block; }
+.week-day .wd-num { font-size: 16px; font-weight: 800; display: block; margin: 2px 0; }
+.week-day .wd-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--green); margin: 0 auto; display: none; }
+.week-day.has-data .wd-dot { display: block; }
+.week-day.active .wd-name, .week-day.active .wd-num { color: #000; }
+</style>
+</head>
+<body>
+
+<!-- NAV TABS -->
+<div class="nav-tabs">
+  <div class="nav-tab active" onclick="showPage('registrar',this)">📥 Registrar</div>
+  <div class="nav-tab" onclick="showPage('reportes',this)">📊 Reportes</div>
+  <div class="nav-tab" onclick="showPage('clientes',this)">👥 Clientes</div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     PAGE: REGISTRAR
+═══════════════════════════════════════════ -->
+<div class="page active" id="page-registrar">
+
+  <div class="header-bar">
+    <div class="logo">PAGOS <span>IB</span></div>
+    <div class="date-pill" id="datePill"></div>
+  </div>
+
+  <div class="totals-strip">
+    <div class="total-cell">
+      <div class="tc-label">Recibido hoy</div>
+      <div class="tc-val" id="todayRec">$0</div>
+    </div>
+    <div class="total-cell">
+      <div class="tc-label">Tu ganancia</div>
+      <div class="tc-val g" id="todayCom">$0</div>
+    </div>
+    <div class="total-cell">
+      <div class="tc-label">A Venezuela</div>
+      <div class="tc-val y" id="todayEnv">$0</div>
+    </div>
+  </div>
+
+  <div class="input-card">
+    <div class="client-row" id="clientBtns"></div>
+
+    <div class="input-row">
+      <input class="amt-input" id="amtInput" type="text"
+        placeholder="30+15+40 o montos separados por +"
+        inputmode="decimal" autocomplete="off" autocorrect="off" spellcheck="false">
+      <button class="btn-go" onclick="processText()">↑</button>
+    </div>
+
+    <div class="img-zone">
+      <label class="img-upload-btn" id="imgUploadBtn">
+        <span>📷</span>
+        <span id="imgLabelTxt">Subir captura de pago</span>
+        <input type="file" accept="image/*" id="imgFileInput" onchange="onImgSelected(this)">
+      </label>
+      <img id="imgThumb" class="img-thumb">
+      <button class="btn-scan" id="btnScan" onclick="scanImage()">Leer 🤖</button>
+    </div>
+
+    <div class="proc-bar" id="procBar">
+      <div class="spin"></div>
+      <span id="procTxt">Procesando con IA...</span>
+    </div>
+  </div>
+
+  <div class="sec-label" id="txSectionLabel">Hoy · 0 transacciones</div>
+  <div class="tx-list" id="txList">
+    <div class="empty-state">
+      <div class="ei">📭</div>
+      <p>Sin pagos registrados hoy.<br>Selecciona un cliente y<br>escribe los montos.</p>
+    </div>
+  </div>
+
+</div>
+
+<!-- ═══════════════════════════════════════════
+     PAGE: REPORTES
+═══════════════════════════════════════════ -->
+<div class="page" id="page-reportes">
+  <div class="report-page">
+
+    <div class="report-tabs">
+      <div class="rtab active" onclick="switchReport('day',this)">Hoy</div>
+      <div class="rtab" onclick="switchReport('week',this)">Esta semana</div>
+      <div class="rtab" onclick="switchReport('month',this)">Mes</div>
+    </div>
+
+    <!-- Week strip (only shown on week tab) -->
+    <div class="week-strip" id="weekStrip" style="display:none"></div>
+
+    <div id="reportContent"></div>
+
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     PAGE: CLIENTES
+═══════════════════════════════════════════ -->
+<div class="page" id="page-clientes">
+  <div class="clients-page">
+    <div class="sec-label" style="padding:4px 0 14px">Gestionar clientes y comisiones</div>
+    <div id="clientManagerList"></div>
+    <button class="btn-add-client" onclick="addClientRow()">+ Agregar cliente</button>
+    <button class="btn-save-clients" onclick="saveClients()">✓ Guardar cambios</button>
+  </div>
+</div>
+
+<script>
+// ══════════════════════════════════════════
+// STATE
+// ══════════════════════════════════════════
+let clients = JSON.parse(localStorage.getItem('ib2_clients') || 'null') || [
+  { name: 'Jean Carlos', pct: 3 },
+  { name: 'Jaime', pct: 3 },
+  { name: 'Lawis', pct: 4 },
+  { name: 'Héctor', pct: 2.5 }
+];
+
+// Transactions stored by date key "YYYY-MM-DD"
+let allTx = JSON.parse(localStorage.getItem('ib2_all_tx') || '{}');
+
+let selectedClientIdx = null;
+let selectedImgData = null;
+let currentReportMode = 'day';
+let selectedWeekDay = null;
+
+const todayKey = () => new Date().toISOString().split('T')[0];
+
+// ══════════════════════════════════════════
+// INIT
+// ══════════════════════════════════════════
+function init() {
+  document.getElementById('datePill').textContent =
+    new Date().toLocaleDateString('es', { weekday:'short', day:'2-digit', month:'short' });
+
+  renderClientBtns();
+  renderTxList();
+  updateTodayTotals();
+
+  document.getElementById('amtInput').addEventListener('keydown', e => {
+    if (e.key === 'Enter') processText();
+  });
+}
+
+// ══════════════════════════════════════════
+// NAVIGATION
+// ══════════════════════════════════════════
+function showPage(name, tab) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('page-' + name).classList.add('active');
+  tab.classList.add('active');
+
+  if (name === 'reportes') renderReport('day');
+  if (name === 'clientes') renderClientManager();
+}
+
+// ══════════════════════════════════════════
+// CLIENT BUTTONS
+// ══════════════════════════════════════════
+function renderClientBtns() {
+  document.getElementById('clientBtns').innerHTML = clients.map((c, i) =>
+    `<button class="client-btn ${selectedClientIdx === i ? 'sel' : ''}" onclick="selClient(${i})">${c.name}</button>`
+  ).join('');
+}
+
+function selClient(i) {
+  selectedClientIdx = selectedClientIdx === i ? null : i;
+  renderClientBtns();
+}
+
+// ══════════════════════════════════════════
+// PROCESS TEXT
+// ══════════════════════════════════════════
+function processText() {
+  const raw = document.getElementById('amtInput').value.trim();
+  if (!raw) return;
+
+  let cIdx = selectedClientIdx;
+  if (cIdx === null) {
+    const lower = raw.toLowerCase();
+    for (let i = 0; i < clients.length; i++) {
+      if (lower.includes(clients[i].name.toLowerCase())) { cIdx = i; break; }
+    }
+  }
+  if (cIdx === null) { alert('Selecciona un cliente'); return; }
+
+  const amounts = (raw.match(/\d+(\.\d+)?/g) || []).map(Number).filter(n => n > 0);
+  if (!amounts.length) { alert('No encontré montos válidos'); return; }
+
+  addTx(cIdx, amounts, null, null);
+  document.getElementById('amtInput').value = '';
+}
+
+// ══════════════════════════════════════════
+// PROCESS IMAGE (AI)
+// ══════════════════════════════════════════
+function onImgSelected(input) {
+  if (!input.files[0]) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    selectedImgData = e.target.result;
+    const thumb = document.getElementById('imgThumb');
+    thumb.src = selectedImgData;
+    thumb.style.display = 'block';
+    document.getElementById('btnScan').style.display = 'block';
+    document.getElementById('imgLabelTxt').textContent = input.files[0].name.substring(0,24);
+  };
+  reader.readAsDataURL(input.files[0]);
+}
+
+async function scanImage() {
+  if (!selectedImgData) return;
+  if (selectedClientIdx === null) { alert('Selecciona un cliente primero'); return; }
+
+  setProc(true, 'Leyendo imagen con IA...');
+
+  const base64 = selectedImgData.split(',')[1];
+  const mime = (selectedImgData.match(/data:(image\/\w+);/) || [])[1] || 'image/jpeg';
+
+  try {
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 500,
+        messages: [{
+          role: 'user',
+          content: [
+            { type: 'image', source: { type: 'base64', media_type: mime, data: base64 } },
+            { type: 'text', text: `Analiza esta imagen de pago/transferencia bancaria. Extrae todos los montos en dólares (USD). Responde SOLO JSON sin markdown: {"amounts":[30.00,15.00],"note":"descripción breve de qué ves en la imagen"}` }
+          ]
+        }]
+      })
+    });
+    const data = await res.json();
+    const txt = (data.content?.find(b => b.type === 'text')?.text || '').replace(/```json|```/g,'').trim();
+    const parsed = JSON.parse(txt);
+
+    setProc(false);
+    if (parsed.amounts?.length) {
+      addTx(selectedClientIdx, parsed.amounts, selectedImgData, parsed.note);
+      resetImg();
+    } else {
+      alert('No encontré montos. Ingresa manualmente.');
+    }
+  } catch(e) {
+    setProc(false);
+    alert('Error al procesar imagen.');
+  }
+}
+
+function resetImg() {
+  selectedImgData = null;
+  document.getElementById('imgFileInput').value = '';
+  document.getElementById('imgThumb').style.display = 'none';
+  document.getElementById('btnScan').style.display = 'none';
+  document.getElementById('imgLabelTxt').textContent = 'Subir captura de pago';
+}
+
+function setProc(show, txt='') {
+  const el = document.getElementById('procBar');
+  el.classList.toggle('show', show);
+  if (txt) document.getElementById('procTxt').textContent = txt;
+}
+
+// ══════════════════════════════════════════
+// ADD TRANSACTION
+// ══════════════════════════════════════════
+function addTx(cIdx, amounts, imgData, note) {
+  const client = clients[cIdx];
+  const total = amounts.reduce((a,b) => a+b, 0);
+  const comision = parseFloat((total * client.pct / 100).toFixed(2));
+  const aEnviar = parseFloat((total - comision).toFixed(2));
+  const key = todayKey();
+
+  if (!allTx[key]) allTx[key] = [];
+  allTx[key].unshift({
+    id: Date.now(),
+    cIdx,
+    cName: client.name,
+    pct: client.pct,
+    amounts,
+    total,
+    comision,
+    aEnviar,
+    imgData: imgData || null,
+    note: note || null,
+    time: new Date().toLocaleTimeString('es',{hour:'2-digit',minute:'2-digit'}),
+    date: key
+  });
+
+  saveAllTx();
+  renderTxList();
+  updateTodayTotals();
+}
+
+function delTx(id) {
+  const key = todayKey();
+  if (allTx[key]) {
+    allTx[key] = allTx[key].filter(t => t.id !== id);
+    if (!allTx[key].length) delete allTx[key];
+  }
+  saveAllTx();
+  renderTxList();
+  updateTodayTotals();
+}
+
+// ══════════════════════════════════════════
+// RENDER TX LIST
+// ══════════════════════════════════════════
+function renderTxList() {
+  const key = todayKey();
+  const txs = allTx[key] || [];
+  const container = document.getElementById('txList');
+  document.getElementById('txSectionLabel').textContent = `Hoy · ${txs.length} transacción${txs.length!==1?'es':''}`;
+
+  if (!txs.length) {
+    container.innerHTML = `<div class="empty-state"><div class="ei">📭</div><p>Sin pagos hoy.<br>Selecciona un cliente y<br>escribe los montos.</p></div>`;
+    return;
+  }
+
+  container.innerHTML = txs.map(tx => `
+    <div class="tx-card ${tx.imgData ? 'img-tx' : ''}">
+      <div class="tx-top">
+        <div class="tx-client-name">${tx.cName}</div>
+        <div class="tx-meta">
+          <div class="tx-time">${tx.time}${tx.imgData ? ' 📷' : ''}</div>
+          <button class="tx-del" onclick="delTx(${tx.id})">×</button>
+        </div>
+      </div>
+      <div class="tx-chips">
+        ${tx.amounts.map(a => `<span class="tx-chip">$${a.toFixed(2)}</span>`).join('')}
+        <span class="tx-chip green">Total: $${tx.total.toFixed(2)}</span>
+      </div>
+      <div class="tx-nums">
+        <div class="tx-num"><span class="tn-l">Recibido</span><span class="tn-v">$${tx.total.toFixed(2)}</span></div>
+        <div class="tx-num"><span class="tn-l">Comisión ${tx.pct}%</span><span class="tn-v g">$${tx.comision.toFixed(2)}</span></div>
+        <div class="tx-num"><span class="tn-l">A Venezuela</span><span class="tn-v">$${tx.aEnviar.toFixed(2)}</span></div>
+      </div>
+      ${tx.note ? `<div class="tx-note">🤖 ${tx.note}</div>` : ''}
+    </div>
+  `).join('');
+}
+
+function updateTodayTotals() {
+  const txs = allTx[todayKey()] || [];
+  document.getElementById('todayRec').textContent = '$' + txs.reduce((s,t)=>s+t.total,0).toFixed(2);
+  document.getElementById('todayCom').textContent = '$' + txs.reduce((s,t)=>s+t.comision,0).toFixed(2);
+  document.getElementById('todayEnv').textContent = '$' + txs.reduce((s,t)=>s+t.aEnviar,0).toFixed(2);
+}
+
+// ══════════════════════════════════════════
+// REPORTS
+// ══════════════════════════════════════════
+function switchReport(mode, el) {
+  document.querySelectorAll('.rtab').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+  currentReportMode = mode;
+  document.getElementById('weekStrip').style.display = mode === 'week' ? 'flex' : 'none';
+  renderReport(mode);
+}
+
+function renderReport(mode) {
+  let txs = [];
+  let title = '';
+
+  if (mode === 'day') {
+    txs = allTx[todayKey()] || [];
+    title = 'HOY · ' + new Date().toLocaleDateString('es',{day:'2-digit',month:'long'}).toUpperCase();
+  } else if (mode === 'week') {
+    const strip = buildWeekStrip();
+    document.getElementById('weekStrip').innerHTML = strip.html;
+    txs = strip.txs;
+    title = 'ESTA SEMANA';
+  } else if (mode === 'month') {
+    const now = new Date();
+    const prefix = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}`;
+    txs = Object.entries(allTx)
+      .filter(([k]) => k.startsWith(prefix))
+      .flatMap(([,v]) => v);
+    title = new Date().toLocaleDateString('es',{month:'long',year:'numeric'}).toUpperCase();
+  }
+
+  document.getElementById('reportContent').innerHTML = buildReportHTML(txs, title, mode);
+}
+
+function buildWeekStrip() {
+  const days = [];
+  const now = new Date();
+  const dayOfWeek = now.getDay();
+  const monday = new Date(now);
+  monday.setDate(now.getDate() - (dayOfWeek === 0 ? 6 : dayOfWeek - 1));
+
+  let allWeekTx = [];
+  const names = ['Lun','Mar','Mié','Jue','Vie','Sáb','Dom'];
+
+  for (let i = 0; i < 7; i++) {
+    const d = new Date(monday);
+    d.setDate(monday.getDate() + i);
+    const key = d.toISOString().split('T')[0];
+    const hasTx = !!(allTx[key]?.length);
+    const isToday = key === todayKey();
+    const isSel = selectedWeekDay === key || (selectedWeekDay === null && isToday);
+    if (isSel || selectedWeekDay === null) allWeekTx = allWeekTx.concat(allTx[key] || []);
+    days.push(`<div class="week-day ${isToday?'active':''} ${hasTx?'has-data':''}" onclick="selectWeekDay('${key}')">
+      <span class="wd-name">${names[i]}</span>
+      <span class="wd-num">${d.getDate()}</span>
+      <div class="wd-dot"></div>
+    </div>`);
+  }
+
+  return { html: days.join(''), txs: allWeekTx };
+}
+
+function selectWeekDay(key) {
+  selectedWeekDay = selectedWeekDay === key ? null : key;
+  renderReport('week');
+}
+
+function buildReportHTML(txs, title, mode) {
+  if (!txs.length) {
+    return `<div class="empty-state" style="padding:40px 0"><div class="ei">📉</div><p>Sin transacciones<br>en este período.</p></div>`;
+  }
+
+  const totalRec = txs.reduce((s,t)=>s+t.total,0);
+  const totalCom = txs.reduce((s,t)=>s+t.comision,0);
+  const totalEnv = txs.reduce((s,t)=>s+t.aEnviar,0);
+  const txCount = txs.length;
+
+  // Group by client
+  const byClient = {};
+  txs.forEach(tx => {
+    if (!byClient[tx.cName]) byClient[tx.cName] = { pct: tx.pct, txs: [], total: 0, comision: 0, aEnviar: 0 };
+    byClient[tx.cName].txs.push(tx);
+    byClient[tx.cName].total += tx.total;
+    byClient[tx.cName].comision += tx.comision;
+    byClient[tx.cName].aEnviar += tx.aEnviar;
+  });
+
+  const summaryBox = `
+    <div class="summary-box">
+      <div class="sb-title">${title}</div>
+      <div class="sb-grid">
+        <div class="sb-item"><span class="sbi-l">Total recibido</span><span class="sbi-v">$${totalRec.toFixed(2)}</span></div>
+        <div class="sb-item"><span class="sbi-l">Tu ganancia</span><span class="sbi-v g">$${totalCom.toFixed(2)}</span></div>
+        <div class="sb-item"><span class="sbi-l">A Venezuela</span><span class="sbi-v y">$${totalEnv.toFixed(2)}</span></div>
+        <div class="sb-item"><span class="sbi-l">Transacciones</span><span class="sbi-v">${txCount}</span></div>
+      </div>
+    </div>
+  `;
+
+  const clientCards = Object.entries(byClient).map(([name, d]) => `
+    <div class="rep-client-card">
+      <div class="rep-client-header" onclick="toggleRepClient(this)">
+        <div>
+          <div class="rep-client-name">${name}</div>
+          <div class="rep-client-pct">${d.pct}% comisión · ${d.txs.length} transacción${d.txs.length!==1?'es':''}</div>
+        </div>
+        <div class="rep-client-arrow">▼</div>
+      </div>
+      <div class="rep-client-body">
+        <div class="rep-stats">
+          <div class="rep-stat"><span class="rs-l">Recibido</span><span class="rs-v">$${d.total.toFixed(2)}</span></div>
+          <div class="rep-stat"><span class="rs-l">Ganancia</span><span class="rs-v g">$${d.comision.toFixed(2)}</span></div>
+          <div class="rep-stat"><span class="rs-l">A enviar</span><span class="rs-v y">$${d.aEnviar.toFixed(2)}</span></div>
+        </div>
+        <div class="rep-tx-list">
+          ${d.txs.map(tx => `
+            <div class="rep-tx-row">
+              <span>${tx.amounts.map(a=>'$'+a.toFixed(2)).join(' + ')}</span>
+              <span class="rep-tx-date">${tx.date} ${tx.time}</span>
+              <span class="rep-tx-com">+$${tx.comision.toFixed(2)}</span>
+            </div>
+          `).join('')}
+        </div>
+      </div>
+    </div>
+  `).join('');
+
+  const exportBtns = `
+    <div class="export-row">
+      <button class="btn-export btn-csv" onclick="exportCSV('${mode}')">⬇️ Descargar CSV</button>
+      <button class="btn-export btn-sheets" onclick="exportSheets('${mode}')">📊 Abrir Google Sheets</button>
+    </div>
+  `;
+
+  return summaryBox + clientCards + exportBtns;
+}
+
+function toggleRepClient(header) {
+  const body = header.nextElementSibling;
+  const arrow = header.querySelector('.rep-client-arrow');
+  body.classList.toggle('show');
+  arrow.classList.toggle('open');
+}
+
+// ══════════════════════════════════════════
+// EXPORT
+// ══════════════════════════════════════════
+function getTxsForMode(mode) {
+  if (mode === 'day') return allTx[todayKey()] || [];
+  if (mode === 'week') {
+    const now = new Date();
+    const dow = now.getDay();
+    const monday = new Date(now);
+    monday.setDate(now.getDate() - (dow===0?6:dow-1));
+    let txs = [];
+    for (let i=0;i<7;i++){
+      const d=new Date(monday); d.setDate(monday.getDate()+i);
+      txs=txs.concat(allTx[d.toISOString().split('T')[0]]||[]);
+    }
+    return txs;
+  }
+  if (mode === 'month') {
+    const now = new Date();
+    const prefix = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}`;
+    return Object.entries(allTx).filter(([k])=>k.startsWith(prefix)).flatMap(([,v])=>v);
+  }
+  return [];
+}
+
+function exportCSV(mode) {
+  const txs = getTxsForMode(mode);
+  if (!txs.length) { alert('No hay datos para exportar'); return; }
+
+  const rows = [['Fecha','Hora','Cliente','Comisión %','Montos','Total','Tu comisión','A Venezuela']];
+  txs.forEach(tx => {
+    rows.push([tx.date, tx.time, tx.cName, tx.pct+'%', tx.amounts.map(a=>'$'+a.toFixed(2)).join(' + '),
+      '$'+tx.total.toFixed(2), '$'+tx.comision.toFixed(2), '$'+tx.aEnviar.toFixed(2)]);
+  });
+
+  // Client totals
+  const byClient = {};
+  txs.forEach(tx => {
+    if (!byClient[tx.cName]) byClient[tx.cName] = {total:0,com:0,env:0};
+    byClient[tx.cName].total+=tx.total; byClient[tx.cName].com+=tx.comision; byClient[tx.cName].env+=tx.aEnviar;
+  });
+  rows.push([]);
+  rows.push(['RESUMEN POR CLIENTE','','','','Total recibido','Tu ganancia','A Venezuela','']);
+  Object.entries(byClient).forEach(([n,d]) => {
+    rows.push(['',n,'','','$'+d.total.toFixed(2),'$'+d.com.toFixed(2),'$'+d.env.toFixed(2),'']);
+  });
+  rows.push([]);
+  const tot = txs.reduce((s,t)=>s+t.total,0);
+  const com = txs.reduce((s,t)=>s+t.comision,0);
+  rows.push(['TOTAL GENERAL','','','','$'+tot.toFixed(2),'$'+com.toFixed(2),'$'+(tot-com).toFixed(2),'']);
+
+  const csv = rows.map(r => r.map(c => `"${c}"`).join(',')).join('\n');
+  const blob = new Blob(['\uFEFF'+csv], { type: 'text/csv;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `pagos-ibrahin-${mode}-${todayKey()}.csv`;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+function exportSheets(mode) {
+  const txs = getTxsForMode(mode);
+  if (!txs.length) { alert('No hay datos para exportar'); return; }
+
+  // Build TSV for Google Sheets paste
+  const rows = [['Fecha','Hora','Cliente','Comisión %','Montos','Total','Tu comisión','A Venezuela']];
+  txs.forEach(tx => {
+    rows.push([tx.date, tx.time, tx.cName, tx.pct, tx.amounts.map(a=>a.toFixed(2)).join(' + '),
+      tx.total.toFixed(2), tx.comision.toFixed(2), tx.aEnviar.toFixed(2)]);
+  });
+
+  const tsv = rows.map(r=>r.join('\t')).join('\n');
+  navigator.clipboard.writeText(tsv).then(() => {
+    alert('✅ Datos copiados al portapapeles.\n\n1. Abre Google Sheets\n2. Haz click en la celda A1\n3. Pega con Ctrl+V (o Cmd+V)\n\nTodos los datos quedarán organizados automáticamente.');
+    window.open('https://sheets.new', '_blank');
+  }).catch(() => {
+    // fallback
+    exportCSV(mode);
+  });
+}
+
+// ══════════════════════════════════════════
+// CLIENT MANAGER
+// ══════════════════════════════════════════
+function renderClientManager() {
+  document.getElementById('clientManagerList').innerHTML = clients.map((c,i) => `
+    <div class="client-manage-card">
+      <div class="cm-color"></div>
+      <input class="cm-name" id="cmn_${i}" value="${c.name}" placeholder="Nombre">
+      <input class="cm-pct" id="cmp_${i}" value="${c.pct}" type="number" step="0.5" min="0" max="100">
+      <span class="cm-pct-sym">%</span>
+      <button class="cm-del" onclick="removeClientRow(${i})">×</button>
+    </div>
+  `).join('');
+}
+
+function addClientRow() {
+  clients.push({ name: '', pct: 5 });
+  renderClientManager();
+}
+
+function removeClientRow(i) {
+  if (clients.length <= 1) { alert('Debes tener al menos 1 cliente'); return; }
+  clients.splice(i, 1);
+  renderClientManager();
+}
+
+function saveClients() {
+  const newClients = [];
+  clients.forEach((_,i) => {
+    const n = document.getElementById(`cmn_${i}`)?.value.trim();
+    const p = parseFloat(document.getElementById(`cmp_${i}`)?.value);
+    if (n && !isNaN(p)) newClients.push({ name: n, pct: p });
+  });
+  if (!newClients.length) { alert('Agrega al menos un cliente válido'); return; }
+  clients = newClients;
+  selectedClientIdx = null;
+  localStorage.setItem('ib2_clients', JSON.stringify(clients));
+  renderClientBtns();
+  alert('✅ Clientes guardados');
+}
+
+// ══════════════════════════════════════════
+// PERSIST
+// ══════════════════════════════════════════
+function saveAllTx() {
+  localStorage.setItem('ib2_all_tx', JSON.stringify(allTx));
+}
+
+init();
+</script>
+</body>
+</html>
