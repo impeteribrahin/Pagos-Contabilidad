@@ -1,0 +1,1088 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="💸 Pagos">
+<title>💸 Pagos · Ibrahin</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=DM+Mono:wght@400;500&display=swap');
+
+:root {
+  --bg: #f5f7ff;
+  --white: #ffffff;
+  --border: #e8ecff;
+  --c1: #6c63ff;   /* purple */
+  --c2: #ff6584;   /* pink */
+  --c3: #43e97b;   /* green */
+  --c4: #f7971e;   /* orange */
+  --c5: #2af598;   /* mint */
+  --dark: #1a1a2e;
+  --muted: #9ba3c7;
+  --shadow: 0 4px 20px rgba(108,99,255,0.10);
+  --shadow2: 0 2px 10px rgba(0,0,0,0.06);
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+
+body {
+  font-family: 'Nunito', sans-serif;
+  background: var(--bg);
+  color: var(--dark);
+  min-height: 100vh;
+  padding-bottom: 80px;
+}
+
+/* ── TOP BAR ── */
+.topbar {
+  background: var(--white);
+  padding: 16px 18px 12px;
+  box-shadow: var(--shadow2);
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.logo {
+  font-size: 20px;
+  font-weight: 900;
+  color: var(--c1);
+  letter-spacing: -0.5px;
+}
+.logo span { color: var(--dark); }
+.topbar-date {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--muted);
+  background: var(--bg);
+  padding: 5px 12px;
+  border-radius: 20px;
+  border: 1.5px solid var(--border);
+}
+
+/* ── NAV TABS ── */
+.nav {
+  display: flex;
+  background: var(--white);
+  border-bottom: 2px solid var(--border);
+}
+.nav-btn {
+  flex: 1;
+  padding: 12px 4px;
+  text-align: center;
+  font-size: 11px;
+  font-weight: 800;
+  color: var(--muted);
+  cursor: pointer;
+  border-bottom: 3px solid transparent;
+  margin-bottom: -2px;
+  transition: all 0.2s;
+  letter-spacing: 0.3px;
+}
+.nav-btn.active { color: var(--c1); border-bottom-color: var(--c1); }
+
+/* ── PAGES ── */
+.page { display: none; }
+.page.active { display: block; }
+
+/* ══════════════════════════════
+   PAGE: REGISTRAR
+══════════════════════════════ */
+
+/* Hero totals */
+.hero {
+  background: linear-gradient(135deg, var(--c1) 0%, #a78bfa 100%);
+  padding: 20px 18px 24px;
+  margin: 14px 14px 0;
+  border-radius: 20px;
+  color: white;
+  box-shadow: 0 8px 32px rgba(108,99,255,0.35);
+  position: relative;
+  overflow: hidden;
+}
+.hero::before {
+  content: '';
+  position: absolute;
+  top: -30px; right: -30px;
+  width: 140px; height: 140px;
+  background: rgba(255,255,255,0.08);
+  border-radius: 50%;
+}
+.hero::after {
+  content: '';
+  position: absolute;
+  bottom: -40px; left: -20px;
+  width: 120px; height: 120px;
+  background: rgba(255,255,255,0.06);
+  border-radius: 50%;
+}
+.hero-label { font-size: 11px; opacity: 0.8; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 4px; }
+.hero-amount { font-size: 38px; font-weight: 900; letter-spacing: -1px; font-family: 'DM Mono', monospace; }
+.hero-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-top: 16px;
+  position: relative;
+  z-index: 1;
+}
+.hero-stat {
+  background: rgba(255,255,255,0.15);
+  border-radius: 12px;
+  padding: 10px 12px;
+  backdrop-filter: blur(10px);
+}
+.hero-stat .hs-label { font-size: 9px; opacity: 0.8; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; display: block; margin-bottom: 3px; }
+.hero-stat .hs-val { font-size: 18px; font-weight: 900; font-family: 'DM Mono', monospace; }
+
+/* Input card */
+.input-card {
+  background: var(--white);
+  border-radius: 20px;
+  margin: 12px 14px;
+  padding: 16px;
+  box-shadow: var(--shadow);
+}
+
+.ic-title { font-size: 13px; font-weight: 800; color: var(--dark); margin-bottom: 12px; }
+
+/* Client chips */
+.client-chips { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 14px; }
+.chip {
+  padding: 8px 14px;
+  border-radius: 50px;
+  border: 2px solid var(--border);
+  background: var(--bg);
+  font-size: 13px;
+  font-weight: 800;
+  color: var(--muted);
+  cursor: pointer;
+  transition: all 0.15s;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+.chip.c0.sel { background: #ede9fe; border-color: var(--c1); color: var(--c1); }
+.chip.c1.sel { background: #fff0f3; border-color: var(--c2); color: var(--c2); }
+.chip.c2.sel { background: #f0fdf4; border-color: #22c55e; color: #22c55e; }
+.chip.c3.sel { background: #fff7ed; border-color: var(--c4); color: var(--c4); }
+.chip.c4.sel { background: #f0fdfa; border-color: #14b8a6; color: #14b8a6; }
+.chip.c5.sel { background: #fef3c7; border-color: #f59e0b; color: #f59e0b; }
+
+/* Date picker row */
+.date-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 12px;
+  background: var(--bg);
+  border: 2px solid var(--border);
+  border-radius: 12px;
+  padding: 10px 14px;
+}
+.date-row label { font-size: 12px; font-weight: 800; color: var(--muted); flex-shrink: 0; }
+.date-row input[type="date"] {
+  border: none;
+  background: transparent;
+  font-family: 'DM Mono', monospace;
+  font-size: 13px;
+  color: var(--dark);
+  font-weight: 600;
+  outline: none;
+  flex: 1;
+}
+
+/* Amount input */
+.amt-row { display: flex; gap: 8px; margin-bottom: 4px; }
+.amt-input {
+  flex: 1;
+  background: var(--bg);
+  border: 2px solid var(--border);
+  border-radius: 12px;
+  padding: 13px 14px;
+  font-family: 'DM Mono', monospace;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--dark);
+  outline: none;
+  transition: border-color 0.2s;
+  -webkit-appearance: none;
+}
+.amt-input:focus { border-color: var(--c1); }
+.amt-input::placeholder { color: var(--muted); font-size: 12px; font-weight: 600; }
+
+.btn-add {
+  width: 50px;
+  background: var(--c1);
+  color: white;
+  border: none;
+  border-radius: 12px;
+  font-size: 22px;
+  font-weight: 900;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 15px rgba(108,99,255,0.4);
+  transition: transform 0.1s;
+  flex-shrink: 0;
+}
+.btn-add:active { transform: scale(0.9); }
+
+.hint { font-size: 11px; color: var(--muted); font-weight: 600; text-align: center; margin-top: 6px; }
+
+/* TX CARDS */
+.sec-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 18px 8px;
+}
+.sec-head h3 { font-size: 14px; font-weight: 900; }
+.sec-head span { font-size: 11px; color: var(--muted); font-weight: 700; }
+
+.tx-list { padding: 0 14px; }
+
+.tx-card {
+  background: var(--white);
+  border-radius: 16px;
+  margin-bottom: 10px;
+  box-shadow: var(--shadow2);
+  overflow: hidden;
+  animation: popIn 0.25s ease;
+  border: 1.5px solid var(--border);
+}
+@keyframes popIn {
+  from { opacity: 0; transform: scale(0.96) translateY(-4px); }
+  to { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+.tx-color-bar { height: 4px; }
+.tx-color-bar.c0 { background: linear-gradient(90deg, var(--c1), #a78bfa); }
+.tx-color-bar.c1 { background: linear-gradient(90deg, var(--c2), #ff9a9e); }
+.tx-color-bar.c2 { background: linear-gradient(90deg, #43e97b, #38f9d7); }
+.tx-color-bar.c3 { background: linear-gradient(90deg, var(--c4), #ffd200); }
+.tx-color-bar.c4 { background: linear-gradient(90deg, #14b8a6, #2af598); }
+.tx-color-bar.c5 { background: linear-gradient(90deg, #f59e0b, #fcd34d); }
+
+.tx-body { padding: 12px 14px; }
+
+.tx-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 8px;
+}
+.tx-client { font-weight: 900; font-size: 15px; }
+.tx-right { display: flex; align-items: center; gap: 6px; }
+.tx-date-badge {
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--muted);
+  background: var(--bg);
+  padding: 3px 8px;
+  border-radius: 20px;
+}
+.tx-del { background: none; border: none; font-size: 16px; cursor: pointer; color: var(--muted); padding: 2px; }
+.tx-del:hover { color: var(--c2); }
+
+.tx-amounts { display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 10px; }
+.tx-amt-tag {
+  font-family: 'DM Mono', monospace;
+  font-size: 12px;
+  font-weight: 500;
+  padding: 3px 9px;
+  border-radius: 6px;
+  background: var(--bg);
+  border: 1.5px solid var(--border);
+  color: var(--dark);
+}
+
+.tx-stats {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 6px;
+}
+.tx-stat {
+  text-align: center;
+  background: var(--bg);
+  border-radius: 10px;
+  padding: 8px 4px;
+}
+.tx-stat .tsl { font-size: 8px; font-weight: 800; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; display: block; margin-bottom: 2px; }
+.tx-stat .tsv { font-family: 'DM Mono', monospace; font-size: 13px; font-weight: 600; color: var(--dark); }
+.tsv.green { color: #22c55e; }
+.tsv.purple { color: var(--c1); }
+
+/* EMPTY */
+.empty {
+  text-align: center;
+  padding: 50px 20px;
+  color: var(--muted);
+}
+.empty .ei { font-size: 50px; margin-bottom: 12px; }
+.empty p { font-size: 13px; font-weight: 600; line-height: 1.7; }
+
+/* ══════════════════════════════
+   PAGE: REPORTES
+══════════════════════════════ */
+.report-page { padding: 14px; }
+
+.period-tabs {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 16px;
+  background: var(--white);
+  padding: 6px;
+  border-radius: 14px;
+  box-shadow: var(--shadow2);
+}
+.ptab {
+  flex: 1;
+  padding: 9px;
+  text-align: center;
+  border-radius: 10px;
+  font-size: 12px;
+  font-weight: 800;
+  color: var(--muted);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.ptab.active { background: var(--c1); color: white; box-shadow: 0 4px 12px rgba(108,99,255,0.35); }
+
+/* Summary card */
+.summary-card {
+  background: var(--white);
+  border-radius: 20px;
+  padding: 18px;
+  margin-bottom: 14px;
+  box-shadow: var(--shadow);
+  border: 1.5px solid var(--border);
+}
+.sc-title { font-size: 12px; font-weight: 900; color: var(--muted); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 14px; }
+.sc-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 14px; }
+.sc-item {
+  background: var(--bg);
+  border-radius: 12px;
+  padding: 12px;
+  border: 1.5px solid var(--border);
+}
+.sc-item .scl { font-size: 9px; font-weight: 800; color: var(--muted); text-transform: uppercase; letter-spacing: 1px; display: block; margin-bottom: 4px; }
+.sc-item .scv { font-family: 'DM Mono', monospace; font-size: 20px; font-weight: 600; }
+.scv.purple { color: var(--c1); }
+.scv.green { color: #22c55e; }
+.scv.orange { color: var(--c4); }
+.scv.pink { color: var(--c2); }
+
+/* CHART */
+.chart-wrap {
+  background: var(--white);
+  border-radius: 20px;
+  padding: 18px;
+  margin-bottom: 14px;
+  box-shadow: var(--shadow);
+  border: 1.5px solid var(--border);
+}
+.chart-title { font-size: 13px; font-weight: 900; margin-bottom: 14px; }
+canvas { max-width: 100%; }
+
+/* Client breakdown */
+.client-card {
+  background: var(--white);
+  border-radius: 16px;
+  margin-bottom: 10px;
+  box-shadow: var(--shadow2);
+  border: 1.5px solid var(--border);
+  overflow: hidden;
+}
+.client-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 14px 16px;
+  cursor: pointer;
+}
+.cch-left { display: flex; align-items: center; gap: 10px; }
+.cch-dot { width: 12px; height: 12px; border-radius: 50%; flex-shrink: 0; }
+.cch-name { font-weight: 900; font-size: 14px; }
+.cch-sub { font-size: 11px; color: var(--muted); font-weight: 700; }
+.cch-earned { font-family: 'DM Mono', monospace; font-size: 16px; font-weight: 700; color: #22c55e; }
+.cch-arrow { color: var(--muted); font-size: 12px; transition: transform 0.2s; }
+.cch-arrow.open { transform: rotate(180deg); }
+
+.client-card-body { display: none; padding: 0 16px 14px; border-top: 1.5px solid var(--border); }
+.client-card-body.show { display: block; }
+.ccb-stats { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; margin-top: 12px; margin-bottom: 10px; }
+.ccb-stat { text-align: center; background: var(--bg); border-radius: 10px; padding: 8px 4px; }
+.ccb-stat .csl { font-size: 8px; font-weight: 800; color: var(--muted); text-transform: uppercase; display: block; margin-bottom: 2px; }
+.ccb-stat .csv { font-family: 'DM Mono', monospace; font-size: 14px; font-weight: 600; }
+
+.tx-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 7px 0;
+  border-bottom: 1px solid var(--border);
+  font-size: 12px;
+  font-weight: 700;
+}
+.tx-row:last-child { border-bottom: none; }
+.tx-row-date { font-family: 'DM Mono', monospace; font-size: 10px; color: var(--muted); }
+.tx-row-com { color: #22c55e; font-family: 'DM Mono', monospace; }
+
+/* Export */
+.export-btns { display: flex; gap: 8px; margin-top: 4px; }
+.btn-exp {
+  flex: 1;
+  padding: 13px;
+  border-radius: 12px;
+  border: none;
+  font-family: 'Nunito', sans-serif;
+  font-size: 13px;
+  font-weight: 800;
+  cursor: pointer;
+  transition: transform 0.1s;
+}
+.btn-exp:active { transform: scale(0.96); }
+.btn-csv { background: #f0fdf4; color: #22c55e; border: 2px solid #bbf7d0; }
+.btn-sheets { background: #f0f9ff; color: #0ea5e9; border: 2px solid #bae6fd; }
+
+/* ══════════════════════════════
+   PAGE: CLIENTES
+══════════════════════════════ */
+.clients-page { padding: 14px; }
+.clients-page .sec-label { font-size: 12px; font-weight: 900; color: var(--muted); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 14px; }
+
+.cm-row {
+  background: var(--white);
+  border-radius: 14px;
+  padding: 12px 14px;
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  box-shadow: var(--shadow2);
+  border: 1.5px solid var(--border);
+}
+.cm-emoji { font-size: 20px; flex-shrink: 0; }
+.cm-name-in {
+  flex: 2;
+  border: 2px solid var(--border);
+  border-radius: 10px;
+  padding: 8px 12px;
+  font-family: 'Nunito', sans-serif;
+  font-size: 14px;
+  font-weight: 800;
+  color: var(--dark);
+  outline: none;
+  background: var(--bg);
+}
+.cm-pct-in {
+  flex: 1;
+  border: 2px solid var(--border);
+  border-radius: 10px;
+  padding: 8px 10px;
+  font-family: 'DM Mono', monospace;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--c1);
+  outline: none;
+  background: var(--bg);
+  text-align: center;
+}
+.cm-pct-sym { font-size: 13px; color: var(--muted); font-weight: 800; flex-shrink: 0; }
+.cm-del-btn { background: none; border: none; font-size: 18px; cursor: pointer; color: var(--muted); }
+.cm-del-btn:hover { color: var(--c2); }
+
+.btn-add-client {
+  width: 100%;
+  padding: 13px;
+  border: 2px dashed var(--border);
+  background: transparent;
+  border-radius: 12px;
+  color: var(--muted);
+  font-family: 'Nunito', sans-serif;
+  font-size: 13px;
+  font-weight: 800;
+  cursor: pointer;
+  margin-bottom: 10px;
+}
+.btn-save {
+  width: 100%;
+  padding: 15px;
+  background: linear-gradient(135deg, var(--c1), #a78bfa);
+  border: none;
+  border-radius: 14px;
+  color: white;
+  font-family: 'Nunito', sans-serif;
+  font-size: 15px;
+  font-weight: 900;
+  cursor: pointer;
+  box-shadow: 0 6px 20px rgba(108,99,255,0.35);
+}
+
+/* BOTTOM NAV */
+.bottom-nav {
+  position: fixed;
+  bottom: 0; left: 0; right: 0;
+  background: var(--white);
+  border-top: 2px solid var(--border);
+  display: flex;
+  z-index: 50;
+  box-shadow: 0 -4px 20px rgba(0,0,0,0.06);
+}
+.bn-btn {
+  flex: 1;
+  padding: 10px 4px;
+  text-align: center;
+  cursor: pointer;
+  border: none;
+  background: transparent;
+  color: var(--muted);
+  font-size: 9px;
+  font-family: 'Nunito', sans-serif;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  transition: color 0.2s;
+}
+.bn-btn .bn-icon { font-size: 22px; display: block; margin-bottom: 2px; }
+.bn-btn.active { color: var(--c1); }
+</style>
+</head>
+<body>
+
+<!-- TOP BAR -->
+<div class="topbar">
+  <div class="logo">💸 Pagos <span>IB</span></div>
+  <div class="topbar-date" id="topDate"></div>
+</div>
+
+<!-- NAV -->
+<div class="nav">
+  <div class="nav-btn active" onclick="showPage('registrar',this)">📥 Registrar</div>
+  <div class="nav-btn" onclick="showPage('reportes',this)">📊 Reportes</div>
+  <div class="nav-btn" onclick="showPage('clientes',this)">👥 Clientes</div>
+</div>
+
+<!-- ══════════════════════════════
+     PAGE: REGISTRAR
+══════════════════════════════ -->
+<div class="page active" id="page-registrar">
+
+  <div class="hero">
+    <div class="hero-label">💰 Total recibido hoy</div>
+    <div class="hero-amount" id="heroRec">$0.00</div>
+    <div class="hero-grid">
+      <div class="hero-stat">
+        <span class="hs-label">✨ Tu ganancia</span>
+        <div class="hs-val" id="heroCom">$0.00</div>
+      </div>
+      <div class="hero-stat">
+        <span class="hs-label">✈️ A Venezuela</span>
+        <div class="hs-val" id="heroEnv">$0.00</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="input-card">
+    <div class="ic-title">👤 Selecciona cliente</div>
+    <div class="client-chips" id="clientChips"></div>
+
+    <div class="date-row">
+      <label>📅 Fecha</label>
+      <input type="date" id="txDate">
+    </div>
+
+    <div class="amt-row">
+      <input class="amt-input" id="amtInput" type="text"
+        placeholder="30+15+40 o escribe montos con +"
+        inputmode="decimal" autocomplete="off" autocorrect="off" spellcheck="false">
+      <button class="btn-add" onclick="addPayment()">↑</button>
+    </div>
+    <div class="hint">💡 Escribe montos separados por + y toca ↑</div>
+  </div>
+
+  <div class="sec-head">
+    <h3 id="txDayLabel">📋 Transacciones de hoy</h3>
+    <span id="txCount">0 registros</span>
+  </div>
+  <div class="tx-list" id="txList">
+    <div class="empty">
+      <div class="ei">📭</div>
+      <p>Sin pagos aún.<br>Selecciona un cliente<br>y escribe los montos.</p>
+    </div>
+  </div>
+
+</div>
+
+<!-- ══════════════════════════════
+     PAGE: REPORTES
+══════════════════════════════ -->
+<div class="page" id="page-reportes">
+  <div class="report-page">
+
+    <div class="period-tabs">
+      <div class="ptab active" onclick="switchPeriod('day',this)">Hoy</div>
+      <div class="ptab" onclick="switchPeriod('week',this)">Semana</div>
+      <div class="ptab" onclick="switchPeriod('month',this)">Mes</div>
+      <div class="ptab" onclick="switchPeriod('all',this)">Todo</div>
+    </div>
+
+    <div id="reportContent"></div>
+
+  </div>
+</div>
+
+<!-- ══════════════════════════════
+     PAGE: CLIENTES
+══════════════════════════════ -->
+<div class="page" id="page-clientes">
+  <div class="clients-page">
+    <div class="sec-label">⚙️ Gestionar clientes</div>
+    <div id="clientManager"></div>
+    <button class="btn-add-client" onclick="addClientRow()">➕ Agregar cliente</button>
+    <button class="btn-save" onclick="saveClients()">✅ Guardar cambios</button>
+  </div>
+</div>
+
+<!-- BOTTOM NAV -->
+<div class="bottom-nav">
+  <button class="bn-btn active" onclick="showPage('registrar',this)"><span class="bn-icon">📥</span>Registrar</button>
+  <button class="bn-btn" onclick="showPage('reportes',this)"><span class="bn-icon">📊</span>Reportes</button>
+  <button class="bn-btn" onclick="showPage('clientes',this)"><span class="bn-icon">👥</span>Clientes</button>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
+<script>
+// ══════════════════════════════
+// STATE
+// ══════════════════════════════
+let clients = JSON.parse(localStorage.getItem('ib3_clients') || 'null') || [
+  { name: 'Jean Carlos', pct: 3, emoji: '👨‍💼' },
+  { name: 'Jaime', pct: 3, emoji: '🧑‍💻' },
+  { name: 'Lawis', pct: 4, emoji: '💼' },
+  { name: 'Héctor', pct: 2.5, emoji: '🤝' }
+];
+
+let allTx = JSON.parse(localStorage.getItem('ib3_tx') || '{}');
+let selClient = null;
+let currentPeriod = 'day';
+let chartInstance = null;
+
+const CLIENT_COLORS = ['#6c63ff','#ff6584','#43e97b','#f7971e','#14b8a6','#f59e0b','#8b5cf6','#ef4444'];
+const todayKey = () => new Date().toISOString().split('T')[0];
+
+// ══════════════════════════════
+// INIT
+// ══════════════════════════════
+function init() {
+  const now = new Date();
+  document.getElementById('topDate').textContent =
+    now.toLocaleDateString('es',{weekday:'short',day:'2-digit',month:'short'});
+  document.getElementById('txDate').value = todayKey();
+  document.getElementById('txDate').max = todayKey();
+
+  renderChips();
+  renderTxList();
+  updateHeroTotals();
+
+  document.getElementById('amtInput').addEventListener('keydown', e => {
+    if (e.key === 'Enter') addPayment();
+  });
+}
+
+// ══════════════════════════════
+// NAVIGATION
+// ══════════════════════════════
+function showPage(name, el) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-btn, .bn-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('page-' + name).classList.add('active');
+  // activate matching nav buttons
+  document.querySelectorAll('.nav-btn, .bn-btn').forEach(b => {
+    if (b.getAttribute('onclick') && b.getAttribute('onclick').includes(name)) b.classList.add('active');
+  });
+  if (name === 'reportes') renderReport(currentPeriod);
+  if (name === 'clientes') renderClientManager();
+}
+
+// ══════════════════════════════
+// CLIENT CHIPS
+// ══════════════════════════════
+function renderChips() {
+  document.getElementById('clientChips').innerHTML = clients.map((c,i) =>
+    `<div class="chip c${i%6} ${selClient===i?'sel':''}" onclick="pickClient(${i})">${c.emoji||'👤'} ${c.name}</div>`
+  ).join('');
+}
+
+function pickClient(i) {
+  selClient = selClient === i ? null : i;
+  renderChips();
+}
+
+// ══════════════════════════════
+// ADD PAYMENT
+// ══════════════════════════════
+function addPayment() {
+  if (selClient === null) { showToast('👤 Selecciona un cliente primero'); return; }
+  const raw = document.getElementById('amtInput').value.trim();
+  const amounts = (raw.match(/\d+(\.\d+)?/g)||[]).map(Number).filter(n=>n>0);
+  if (!amounts.length) { showToast('💡 Escribe los montos separados por +'); return; }
+
+  const date = document.getElementById('txDate').value || todayKey();
+  const c = clients[selClient];
+  const total = amounts.reduce((a,b)=>a+b,0);
+  const comision = parseFloat((total * c.pct / 100).toFixed(2));
+  const aEnviar = parseFloat((total - comision).toFixed(2));
+
+  if (!allTx[date]) allTx[date] = [];
+  allTx[date].unshift({
+    id: Date.now(),
+    cIdx: selClient,
+    cName: c.name,
+    cEmoji: c.emoji||'👤',
+    pct: c.pct,
+    amounts, total, comision, aEnviar,
+    date,
+    time: new Date().toLocaleTimeString('es',{hour:'2-digit',minute:'2-digit'})
+  });
+
+  saveTx();
+  renderTxList();
+  updateHeroTotals();
+  document.getElementById('amtInput').value = '';
+  showToast(`✅ +$${total.toFixed(2)} de ${c.name}`);
+}
+
+function deleteTx(id, date) {
+  if (!allTx[date]) return;
+  allTx[date] = allTx[date].filter(t=>t.id!==id);
+  if (!allTx[date].length) delete allTx[date];
+  saveTx();
+  renderTxList();
+  updateHeroTotals();
+}
+
+// ══════════════════════════════
+// RENDER TX LIST
+// ══════════════════════════════
+function renderTxList() {
+  const key = todayKey();
+  const txs = allTx[key] || [];
+  document.getElementById('txCount').textContent = `${txs.length} registro${txs.length!==1?'s':''}`;
+
+  const container = document.getElementById('txList');
+  if (!txs.length) {
+    container.innerHTML = `<div class="empty"><div class="ei">📭</div><p>Sin pagos hoy.<br>Selecciona un cliente<br>y escribe los montos.</p></div>`;
+    return;
+  }
+
+  container.innerHTML = txs.map(tx => `
+    <div class="tx-card">
+      <div class="tx-color-bar c${tx.cIdx%6}"></div>
+      <div class="tx-body">
+        <div class="tx-top">
+          <div class="tx-client">${tx.cEmoji} ${tx.cName}</div>
+          <div class="tx-right">
+            <div class="tx-date-badge">🕐 ${tx.time}</div>
+            <button class="tx-del" onclick="deleteTx(${tx.id},'${tx.date}')">🗑️</button>
+          </div>
+        </div>
+        <div class="tx-amounts">
+          ${tx.amounts.map(a=>`<span class="tx-amt-tag">$${a.toFixed(2)}</span>`).join('')}
+        </div>
+        <div class="tx-stats">
+          <div class="tx-stat">
+            <span class="tsl">💵 Total</span>
+            <span class="tsv purple">$${tx.total.toFixed(2)}</span>
+          </div>
+          <div class="tx-stat">
+            <span class="tsl">✨ Ganancia</span>
+            <span class="tsv green">$${tx.comision.toFixed(2)}</span>
+          </div>
+          <div class="tx-stat">
+            <span class="tsl">✈️ Enviar</span>
+            <span class="tsv">$${tx.aEnviar.toFixed(2)}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  `).join('');
+}
+
+function updateHeroTotals() {
+  const txs = allTx[todayKey()] || [];
+  document.getElementById('heroRec').textContent = '$' + txs.reduce((s,t)=>s+t.total,0).toFixed(2);
+  document.getElementById('heroCom').textContent = '$' + txs.reduce((s,t)=>s+t.comision,0).toFixed(2);
+  document.getElementById('heroEnv').textContent = '$' + txs.reduce((s,t)=>s+t.aEnviar,0).toFixed(2);
+}
+
+// ══════════════════════════════
+// REPORTS
+// ══════════════════════════════
+function switchPeriod(period, el) {
+  document.querySelectorAll('.ptab').forEach(t=>t.classList.remove('active'));
+  el.classList.add('active');
+  currentPeriod = period;
+  renderReport(period);
+}
+
+function getTxsForPeriod(period) {
+  const now = new Date();
+  if (period === 'day') return allTx[todayKey()] || [];
+  if (period === 'week') {
+    const dow = now.getDay();
+    const monday = new Date(now);
+    monday.setDate(now.getDate() - (dow===0?6:dow-1));
+    let result = [];
+    for (let i=0;i<7;i++) {
+      const d = new Date(monday); d.setDate(monday.getDate()+i);
+      result = result.concat(allTx[d.toISOString().split('T')[0]]||[]);
+    }
+    return result;
+  }
+  if (period === 'month') {
+    const prefix = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}`;
+    return Object.entries(allTx).filter(([k])=>k.startsWith(prefix)).flatMap(([,v])=>v);
+  }
+  return Object.values(allTx).flat();
+}
+
+function renderReport(period) {
+  const txs = getTxsForPeriod(period);
+  const labels = { day:'Hoy', week:'Esta semana', month:'Este mes', all:'Todo el historial' };
+
+  const totalRec = txs.reduce((s,t)=>s+t.total,0);
+  const totalCom = txs.reduce((s,t)=>s+t.comision,0);
+  const totalEnv = txs.reduce((s,t)=>s+t.aEnviar,0);
+
+  // Group by client
+  const byClient = {};
+  txs.forEach(tx => {
+    if (!byClient[tx.cName]) byClient[tx.cName] = { idx: tx.cIdx, emoji: tx.cEmoji, pct: tx.pct, txs:[], total:0, comision:0, aEnviar:0 };
+    byClient[tx.cName].txs.push(tx);
+    byClient[tx.cName].total += tx.total;
+    byClient[tx.cName].comision += tx.comision;
+    byClient[tx.cName].aEnviar += tx.aEnviar;
+  });
+
+  const summaryHTML = `
+    <div class="summary-card">
+      <div class="sc-title">📊 ${labels[period]}</div>
+      <div class="sc-grid">
+        <div class="sc-item"><span class="scl">💵 Total recibido</span><span class="scv purple">$${totalRec.toFixed(2)}</span></div>
+        <div class="sc-item"><span class="scl">✨ Tu ganancia</span><span class="scv green">$${totalCom.toFixed(2)}</span></div>
+        <div class="sc-item"><span class="scl">✈️ A Venezuela</span><span class="scv orange">$${totalEnv.toFixed(2)}</span></div>
+        <div class="sc-item"><span class="scl">🔢 Transacciones</span><span class="scv pink">${txs.length}</span></div>
+      </div>
+      <div class="export-btns">
+        <button class="btn-exp btn-csv" onclick="exportCSV('${period}')">⬇️ CSV / Excel</button>
+        <button class="btn-exp btn-sheets" onclick="exportSheets('${period}')">📋 Copiar para Sheets</button>
+      </div>
+    </div>
+  `;
+
+  // Donut chart
+  const chartHTML = Object.keys(byClient).length > 0 ? `
+    <div class="chart-wrap">
+      <div class="chart-title">🍩 Ganancia por cliente</div>
+      <canvas id="donutChart" height="200"></canvas>
+    </div>
+  ` : '';
+
+  // Client cards
+  const clientsHTML = Object.entries(byClient).map(([name, d], i) => `
+    <div class="client-card">
+      <div class="client-card-header" onclick="toggleCC(this)">
+        <div class="cch-left">
+          <div class="cch-dot" style="background:${CLIENT_COLORS[d.idx%CLIENT_COLORS.length]}"></div>
+          <div>
+            <div class="cch-name">${d.emoji} ${name}</div>
+            <div class="cch-sub">${d.pct}% · ${d.txs.length} transacción${d.txs.length!==1?'es':''}</div>
+          </div>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px">
+          <div class="cch-earned">+$${d.comision.toFixed(2)}</div>
+          <div class="cch-arrow">▼</div>
+        </div>
+      </div>
+      <div class="client-card-body">
+        <div class="ccb-stats">
+          <div class="ccb-stat"><span class="csl">Recibido</span><span class="csv">$${d.total.toFixed(2)}</span></div>
+          <div class="ccb-stat"><span class="csl">Ganancia</span><span class="csv" style="color:#22c55e">$${d.comision.toFixed(2)}</span></div>
+          <div class="ccb-stat"><span class="csl">A enviar</span><span class="csv" style="color:#f7971e">$${d.aEnviar.toFixed(2)}</span></div>
+        </div>
+        ${d.txs.map(tx=>`
+          <div class="tx-row">
+            <span>${tx.amounts.map(a=>'$'+a.toFixed(2)).join(' + ')}</span>
+            <span class="tx-row-date">${tx.date}</span>
+            <span class="tx-row-com">+$${tx.comision.toFixed(2)}</span>
+          </div>
+        `).join('')}
+      </div>
+    </div>
+  `).join('');
+
+  const emptyHTML = !txs.length ? `<div class="empty"><div class="ei">📉</div><p>Sin datos en este período.</p></div>` : '';
+
+  document.getElementById('reportContent').innerHTML = summaryHTML + chartHTML + clientsHTML + emptyHTML;
+
+  // Draw chart
+  if (Object.keys(byClient).length > 0) {
+    setTimeout(() => {
+      const ctx = document.getElementById('donutChart');
+      if (!ctx) return;
+      if (chartInstance) chartInstance.destroy();
+      chartInstance = new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+          labels: Object.keys(byClient).map(n => `${byClient[n].emoji} ${n}`),
+          datasets: [{
+            data: Object.values(byClient).map(d => d.comision),
+            backgroundColor: Object.values(byClient).map((_,i2) => CLIENT_COLORS[Object.values(byClient)[i2].idx % CLIENT_COLORS.length]),
+            borderWidth: 3,
+            borderColor: '#ffffff',
+            hoverOffset: 8
+          }]
+        },
+        options: {
+          responsive: true,
+          plugins: {
+            legend: {
+              position: 'bottom',
+              labels: { font: { family: 'Nunito', weight: '800', size: 12 }, padding: 16 }
+            },
+            tooltip: {
+              callbacks: {
+                label: ctx => ` $${ctx.raw.toFixed(2)} ganados`
+              }
+            }
+          },
+          cutout: '65%'
+        }
+      });
+    }, 100);
+  }
+}
+
+function toggleCC(header) {
+  const body = header.nextElementSibling;
+  const arrow = header.querySelector('.cch-arrow');
+  body.classList.toggle('show');
+  arrow.classList.toggle('open');
+}
+
+// ══════════════════════════════
+// EXPORT
+// ══════════════════════════════
+function exportCSV(period) {
+  const txs = getTxsForPeriod(period);
+  if (!txs.length) { showToast('Sin datos para exportar'); return; }
+
+  const rows = [['Fecha','Hora','Cliente','Comisión %','Montos','Total','Tu ganancia','A Venezuela']];
+  txs.forEach(tx => rows.push([
+    tx.date, tx.time, tx.cName, tx.pct+'%',
+    tx.amounts.map(a=>'$'+a.toFixed(2)).join(' + '),
+    '$'+tx.total.toFixed(2), '$'+tx.comision.toFixed(2), '$'+tx.aEnviar.toFixed(2)
+  ]));
+
+  rows.push([],[' RESUMEN POR CLIENTE','','','','Total','Ganancia','A Venezuela']);
+  const byC = {};
+  txs.forEach(tx=>{
+    if(!byC[tx.cName]) byC[tx.cName]={total:0,com:0,env:0};
+    byC[tx.cName].total+=tx.total; byC[tx.cName].com+=tx.comision; byC[tx.cName].env+=tx.aEnviar;
+  });
+  Object.entries(byC).forEach(([n,d])=>rows.push(['',n,'','','$'+d.total.toFixed(2),'$'+d.com.toFixed(2),'$'+d.env.toFixed(2),'']));
+  rows.push([],[' TOTAL','','','','$'+txs.reduce((s,t)=>s+t.total,0).toFixed(2),'$'+txs.reduce((s,t)=>s+t.comision,0).toFixed(2),'$'+txs.reduce((s,t)=>s+t.aEnviar,0).toFixed(2)]);
+
+  const csv = rows.map(r=>r.map(c=>`"${c}"`).join(',')).join('\n');
+  const blob = new Blob(['\uFEFF'+csv],{type:'text/csv;charset=utf-8;'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `pagos-ibrahin-${period}-${todayKey()}.csv`;
+  a.click();
+  showToast('✅ CSV descargado');
+}
+
+function exportSheets(period) {
+  const txs = getTxsForPeriod(period);
+  if (!txs.length) { showToast('Sin datos'); return; }
+  const rows = [['Fecha','Hora','Cliente','Comisión %','Total','Ganancia','A Venezuela']];
+  txs.forEach(tx=>rows.push([tx.date,tx.time,tx.cName,tx.pct,tx.total.toFixed(2),tx.comision.toFixed(2),tx.aEnviar.toFixed(2)]));
+  const tsv = rows.map(r=>r.join('\t')).join('\n');
+  navigator.clipboard.writeText(tsv).then(()=>{
+    showToast('📋 Datos copiados — abre Sheets y pega');
+    setTimeout(()=>window.open('https://sheets.new','_blank'), 1000);
+  }).catch(()=>exportCSV(period));
+}
+
+// ══════════════════════════════
+// CLIENT MANAGER
+// ══════════════════════════════
+const EMOJIS = ['👨‍💼','🧑‍💻','💼','🤝','👷','🧑‍🦱','👔','🤵'];
+
+function renderClientManager() {
+  document.getElementById('clientManager').innerHTML = clients.map((c,i)=>`
+    <div class="cm-row">
+      <div class="cm-emoji">${c.emoji||EMOJIS[i%EMOJIS.length]}</div>
+      <input class="cm-name-in" id="cmn_${i}" value="${c.name}" placeholder="Nombre">
+      <input class="cm-pct-in" id="cmp_${i}" value="${c.pct}" type="number" step="0.5" min="0" max="100">
+      <span class="cm-pct-sym">%</span>
+      <button class="cm-del-btn" onclick="removeClient(${i})">🗑️</button>
+    </div>
+  `).join('');
+}
+
+function addClientRow() {
+  clients.push({ name:'', pct: 5, emoji: EMOJIS[clients.length % EMOJIS.length] });
+  renderClientManager();
+}
+
+function removeClient(i) {
+  if (clients.length <= 1) { showToast('Necesitas al menos 1 cliente'); return; }
+  clients.splice(i,1);
+  renderClientManager();
+}
+
+function saveClients() {
+  const nc = [];
+  clients.forEach((_,i)=>{
+    const n = document.getElementById(`cmn_${i}`)?.value.trim();
+    const p = parseFloat(document.getElementById(`cmp_${i}`)?.value);
+    if (n && !isNaN(p)) nc.push({ name:n, pct:p, emoji: clients[i].emoji || EMOJIS[i%EMOJIS.length] });
+  });
+  if (!nc.length) { showToast('Agrega al menos 1 cliente'); return; }
+  clients = nc;
+  selClient = null;
+  localStorage.setItem('ib3_clients', JSON.stringify(clients));
+  renderChips();
+  showToast('✅ Clientes guardados');
+}
+
+// ══════════════════════════════
+// TOAST
+// ══════════════════════════════
+function showToast(msg) {
+  const t = document.createElement('div');
+  t.style.cssText = `position:fixed;bottom:90px;left:50%;transform:translateX(-50%);background:${/error|sin|necesitas/i.test(msg)?'#ff6584':'#6c63ff'};color:white;padding:10px 20px;border-radius:50px;font-family:Nunito,sans-serif;font-size:13px;font-weight:800;z-index:999;box-shadow:0 4px 20px rgba(0,0,0,0.2);white-space:nowrap;`;
+  t.textContent = msg;
+  document.body.appendChild(t);
+  setTimeout(()=>t.remove(), 2500);
+}
+
+// ══════════════════════════════
+// PERSIST
+// ══════════════════════════════
+function saveTx() {
+  localStorage.setItem('ib3_tx', JSON.stringify(allTx));
+}
+
+init();
+</script>
+</body>
+</html>
