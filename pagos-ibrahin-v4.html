@@ -798,7 +798,18 @@ let currentPeriod = 'day';
 let chartInstance = null;
 
 const CLIENT_COLORS = ['#6c63ff','#ff6584','#43e97b','#f7971e','#14b8a6','#f59e0b','#8b5cf6','#ef4444'];
-const todayKey = () => new Date().toISOString().split('T')[0];
+const todayKey = () => {
+  const d = new Date();
+  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+};
+
+function normalizeDate(d) {
+  if (!d) return todayKey();
+  if (/^\d{4}-\d{2}-\d{2}$/.test(String(d))) return String(d);
+  const parsed = new Date(d);
+  if (!isNaN(parsed)) return `${parsed.getFullYear()}-${String(parsed.getMonth()+1).padStart(2,'0')}-${String(parsed.getDate()).padStart(2,'0')}`;
+  return todayKey();
+}
 
 // ══════════════════════════════
 // INIT
@@ -965,7 +976,15 @@ function switchPeriod(period, el) {
 
 function getTxsForPeriod(period) {
   const now = new Date();
-  if (period === 'day') return allTx[todayKey()] || [];
+  // Normalize all stored keys
+  const normTx = {};
+  Object.entries(allTx).forEach(([k,v]) => {
+    const nk = normalizeDate(k);
+    if (!normTx[nk]) normTx[nk] = [];
+    normTx[nk] = normTx[nk].concat(v);
+  });
+
+  if (period === 'day') return normTx[todayKey()] || [];
   if (period === 'week') {
     const dow = now.getDay();
     const monday = new Date(now);
@@ -973,15 +992,16 @@ function getTxsForPeriod(period) {
     let result = [];
     for (let i=0;i<7;i++) {
       const d = new Date(monday); d.setDate(monday.getDate()+i);
-      result = result.concat(allTx[d.toISOString().split('T')[0]]||[]);
+      const key = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+      result = result.concat(normTx[key]||[]);
     }
     return result;
   }
   if (period === 'month') {
     const prefix = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}`;
-    return Object.entries(allTx).filter(([k])=>k.startsWith(prefix)).flatMap(([,v])=>v);
+    return Object.entries(normTx).filter(([k])=>k.startsWith(prefix)).flatMap(([,v])=>v);
   }
-  return Object.values(allTx).flat();
+  return Object.values(normTx).flat();
 }
 
 function renderReport(period) {
