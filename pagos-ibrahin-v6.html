@@ -798,7 +798,24 @@ let currentPeriod = 'day';
 let chartInstance = null;
 
 const CLIENT_COLORS = ['#6c63ff','#ff6584','#43e97b','#f7971e','#14b8a6','#f59e0b','#8b5cf6','#ef4444'];
-const todayKey = () => new Date().toISOString().split('T')[0];
+
+const todayKey = () => {
+  const d = new Date();
+  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+};
+
+// Normalize any date format to YYYY-MM-DD
+function normalizeDate(d) {
+  if (!d) return todayKey();
+  // Already YYYY-MM-DD
+  if (/^\d{4}-\d{2}-\d{2}$/.test(String(d))) return String(d);
+  // Try parsing
+  const parsed = new Date(d);
+  if (!isNaN(parsed)) {
+    return `${parsed.getFullYear()}-${String(parsed.getMonth()+1).padStart(2,'0')}-${String(parsed.getDate()).padStart(2,'0')}`;
+  }
+  return todayKey();
+}
 
 // ══════════════════════════════
 // INIT
@@ -965,7 +982,15 @@ function switchPeriod(period, el) {
 
 function getTxsForPeriod(period) {
   const now = new Date();
-  if (period === 'day') return allTx[todayKey()] || [];
+  // Normalize all stored keys first
+  const normalizedTx = {};
+  Object.entries(allTx).forEach(([k, v]) => {
+    const nk = normalizeDate(k);
+    if (!normalizedTx[nk]) normalizedTx[nk] = [];
+    normalizedTx[nk] = normalizedTx[nk].concat(v);
+  });
+
+  if (period === 'day') return normalizedTx[todayKey()] || [];
   if (period === 'week') {
     const dow = now.getDay();
     const monday = new Date(now);
@@ -973,15 +998,16 @@ function getTxsForPeriod(period) {
     let result = [];
     for (let i=0;i<7;i++) {
       const d = new Date(monday); d.setDate(monday.getDate()+i);
-      result = result.concat(allTx[d.toISOString().split('T')[0]]||[]);
+      const key = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+      result = result.concat(normalizedTx[key]||[]);
     }
     return result;
   }
   if (period === 'month') {
     const prefix = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}`;
-    return Object.entries(allTx).filter(([k])=>k.startsWith(prefix)).flatMap(([,v])=>v);
+    return Object.entries(normalizedTx).filter(([k])=>k.startsWith(prefix)).flatMap(([,v])=>v);
   }
-  return Object.values(allTx).flat();
+  return Object.values(normalizedTx).flat();
 }
 
 function renderReport(period) {
@@ -1450,11 +1476,19 @@ async function loadFromSheets() {
     const res = await fetch(SHEETS_URL + '?action=loadTx');
     const data = await res.json();
     if (data.allTx && Object.keys(data.allTx).length > 0) {
-      allTx = data.allTx;
+      const normalized = {};
+      Object.entries(data.allTx).forEach(([k, v]) => {
+        const nk = normalizeDate(k);
+        if (!normalized[nk]) normalized[nk] = [];
+        normalized[nk] = normalized[nk].concat(v.map(tx => ({...tx, date: nk})));
+      });
+      allTx = normalized;
       localStorage.setItem('ib_tx_v6', JSON.stringify(allTx));
       renderTxList();
       updateHeroTotals();
       showToast('✅ Sincronizado');
+    } else {
+      showToast('✅ Listo');
     }
   } catch(e) {
     console.log('Load error:', e);
