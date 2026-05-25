@@ -928,7 +928,7 @@ function renderTxList() {
       <div class="tx-color-bar c${tx.cIdx%6}"></div>
       <div class="tx-body">
         <div class="tx-top">
-          <div class="tx-client">${tx.cEmoji} ${tx.cName}</div>
+          <div class="tx-client">${(tx.cEmoji && tx.cEmoji !== 'undefined') ? tx.cEmoji+' ' : ''}${tx.cName}</div>
           <div class="tx-right">
             <div class="tx-date-badge">🕐 ${tx.time}</div>
             <button class="tx-del" onclick="openEditModal(${tx.id},'${tx.date}')" style="color:#6c63ff;font-size:16px">✏️</button>
@@ -1015,7 +1015,8 @@ function renderReport(period) {
   // Group by client
   const byClient = {};
   txs.forEach(tx => {
-    if (!byClient[tx.cName]) byClient[tx.cName] = { idx: tx.cIdx, emoji: tx.cEmoji, pct: tx.pct, txs:[], total:0, comision:0, aEnviar:0 };
+    if (!byClient[tx.cName]) byClient[tx.cName] = { idx: tx.cIdx||0, emoji: tx.cEmoji||'👤', pct: tx.pct, txs:[], total:0, comision:0, aEnviar:0 };
+    byClient[tx.cName].emoji = byClient[tx.cName].emoji && byClient[tx.cName].emoji !== 'undefined' ? byClient[tx.cName].emoji : '👤';
     byClient[tx.cName].txs.push(tx);
     byClient[tx.cName].total += tx.total;
     byClient[tx.cName].comision += tx.comision;
@@ -1050,7 +1051,7 @@ function renderReport(period) {
         return `
           <div style="margin-bottom:14px">
             <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:5px">
-              <span style="font-size:13px;font-weight:800">${d.emoji} ${name}</span>
+              <span style="font-size:13px;font-weight:800">${(d.emoji && d.emoji !== 'undefined') ? d.emoji+' ' : ''}${name}</span>
               <span style="font-family:'DM Mono',monospace;font-size:13px;font-weight:700;color:${color}">+$${d.comision.toFixed(2)}</span>
             </div>
             <div style="background:#f0f0f8;border-radius:50px;height:12px;overflow:hidden">
@@ -1070,7 +1071,7 @@ function renderReport(period) {
         <div class="cch-left">
           <div class="cch-dot" style="background:${CLIENT_COLORS[d.idx%CLIENT_COLORS.length]}"></div>
           <div>
-            <div class="cch-name">${d.emoji} ${name}</div>
+            <div class="cch-name">${(d.emoji && d.emoji !== 'undefined') ? d.emoji+' ' : ''}${name}</div>
             <div class="cch-sub">${d.pct}% · ${d.txs.length} transacción${d.txs.length!==1?'es':''}</div>
           </div>
         </div>
