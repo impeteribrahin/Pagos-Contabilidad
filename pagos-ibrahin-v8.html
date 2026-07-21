@@ -886,24 +886,31 @@ function addPayment() {
   const comision = parseFloat((total * c.pct / 100).toFixed(2));
   const aEnviar = parseFloat((total - comision).toFixed(2));
 
-  if (!allTx[date]) allTx[date] = [];
-  allTx[date].unshift({
+  const newTx = {
     id: Date.now(), cIdx: selClient, cName: c.name,
     cEmoji: c.emoji||'👤', pct: c.pct,
     amounts, total, comision, aEnviar, date,
     time: new Date().toLocaleTimeString('es',{hour:'2-digit',minute:'2-digit'})
-  });
+  };
 
-  saveTx(); renderTxList(); updateHero();
+  if (!allTx[date]) allTx[date] = [];
+  allTx[date].unshift(newTx);
+
+  localStorage.setItem('ib3_tx', JSON.stringify(allTx));
+  renderTxList(); updateHero();
   document.getElementById('amtInput').value = '';
   showToast(`✅ +$${total.toFixed(2)} · ${c.name}`);
+
+  syncAddTx(newTx);
 }
 
 function deleteTx(id, date) {
   if (!allTx[date]) return;
   allTx[date] = allTx[date].filter(t=>t.id!==id);
   if (!allTx[date].length) delete allTx[date];
-  saveTx(); renderTxList(); updateHero();
+  localStorage.setItem('ib3_tx', JSON.stringify(allTx));
+  renderTxList(); updateHero();
+  syncDeleteTx(id);
 }
 
 function deleteTxR(id, date) { deleteTx(id, date); renderReport(currentPeriod); }
@@ -1239,10 +1246,14 @@ function saveEdit() {
     if(!allTx[editDate2].length) delete allTx[editDate2];
   }
   if(!allTx[newDate]) allTx[newDate]=[];
-  allTx[newDate].unshift({id:editId,cIdx:editSel,cName:c.name,cEmoji:c.emoji||'👤',pct:c.pct,amounts,total,comision,aEnviar,date:newDate,time:new Date().toLocaleTimeString('es',{hour:'2-digit',minute:'2-digit'})});
+  const updatedTx = {id:editId,cIdx:editSel,cName:c.name,cEmoji:c.emoji||'👤',pct:c.pct,amounts,total,comision,aEnviar,date:newDate,time:new Date().toLocaleTimeString('es',{hour:'2-digit',minute:'2-digit'})};
+  allTx[newDate].unshift(updatedTx);
 
-  saveTx(); renderTxList(); updateHero(); renderReport(currentPeriod);
+  localStorage.setItem('ib3_tx', JSON.stringify(allTx));
+  renderTxList(); updateHero(); renderReport(currentPeriod);
   closeEdit(); showToast('✅ Actualizado');
+
+  syncUpdateTx(updatedTx);
 }
 
 // ══════════════════════════════════════════
@@ -1306,18 +1317,33 @@ function exportSheets(period) {
 }
 
 // ══════════════════════════════════════════
-// SYNC
+// SYNC — cada acción se manda individualmente para evitar duplicados
 // ══════════════════════════════════════════
-function saveTx() {
-  localStorage.setItem('ib3_tx', JSON.stringify(allTx));
-  syncToSheets();
-}
-
-async function syncToSheets() {
+async function syncAddTx(tx) {
   try {
     await fetch(SHEETS_URL, {
       method: 'POST', mode: 'no-cors',
-      body: JSON.stringify({ action: 'saveTx', allTx }),
+      body: JSON.stringify({ action: 'addTx', tx }),
+      headers: { 'Content-Type': 'text/plain' }
+    });
+  } catch(e) {}
+}
+
+async function syncDeleteTx(id) {
+  try {
+    await fetch(SHEETS_URL, {
+      method: 'POST', mode: 'no-cors',
+      body: JSON.stringify({ action: 'deleteTx', id }),
+      headers: { 'Content-Type': 'text/plain' }
+    });
+  } catch(e) {}
+}
+
+async function syncUpdateTx(tx) {
+  try {
+    await fetch(SHEETS_URL, {
+      method: 'POST', mode: 'no-cors',
+      body: JSON.stringify({ action: 'updateTx', tx }),
       headers: { 'Content-Type': 'text/plain' }
     });
   } catch(e) {}
@@ -1343,7 +1369,6 @@ async function loadFromSheets() {
       localStorage.setItem('ib3_tx', JSON.stringify(allTx));
       renderTxList(); updateHero();
       showToast('✅ Sincronizado');
-      syncToSheets();
     }
   } catch(e) {}
 }
