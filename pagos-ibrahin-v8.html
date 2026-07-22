@@ -1354,7 +1354,8 @@ async function loadFromSheets() {
     showToast('🔄 Sincronizando...');
     const res = await fetch(SHEETS_URL + '?action=loadTx');
     const data = await res.json();
-    if (data.allTx && Object.keys(data.allTx).length > 0) {
+    // Sheets siempre es la fuente de verdad — si está vacío, se vacía local también
+    if (data.allTx) {
       const normalized = {};
       Object.entries(data.allTx).forEach(([k,v]) => {
         const nk = normalizeDate(k);
